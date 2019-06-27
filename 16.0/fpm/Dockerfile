@@ -1,6 +1,12 @@
 # DO NOT EDIT: created by update.sh from Dockerfile-debian.template
 FROM php:7.3-fpm-stretch
 
+# Adjust uid/gid to match with Fedora 'apache'
+RUN set -ex; \
+    \
+    usermod -u 48 www-data; \
+    groupmod -g 48 www-data;
+
 # entrypoint.sh and cron.sh dependencies
 RUN set -ex; \
     \
