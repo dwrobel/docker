@@ -1,0 +1,25 @@
+[Unit]
+Description=NextCloud Server
+Documentation=https://docs.nextcloud.com/
+Documentation=https://github.com/nextcloud/docker
+Requires=docker.service
+After=httpd.service
+After=php-fpm.service
+After=docker.service
+After=network-online.target
+
+[Service]
+Restart=always
+WorkingDirectory=/var/www/html/nextcloud/
+ExecStartPre=-/usr/bin/docker rm --force %n
+ExecStart=/usr/bin/docker run -t --name=%n \
+    --network default \
+    --sysctl net.ipv6.conf.all.disable_ipv6=1 \
+    --publish 127.0.0.1:9000:9000 \
+    -u 48:48 \
+    -v nextcloud:/var/www/html dw/nextcloud:fpm
+ExecStop=/usr/bin/docker stop -t 1 %n
+ExecStopPost=-/usr/bin/docker rm --force=true %n
+
+[Install]
+WantedBy=multi-user.target
